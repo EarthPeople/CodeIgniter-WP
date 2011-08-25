@@ -1,14 +1,14 @@
 <?php  if (!defined('BASEPATH')) exit('No direct script access allowed');	
 	
 /**
- * WP Library
+ * CodeIgniter-WP Library
  *
  * @author 		peder fjällström / earth people ab
  * @copyright 	use any way you see fit
  * @version 	0.0.1
  */
 
-define('WP_VERSION', '0.0.1');
+define('CODEIGNITER-WP_VERSION', '0.0.1');
 
 class Wp
 {
