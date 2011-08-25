@@ -8,7 +8,7 @@
  * @version 	0.0.1
  */
 
-define('CODEIGNITER-WP_VERSION', '0.0.3');
+define('CODEIGNITER-WP_VERSION', '0.0.4');
 
 class Wp
 {
