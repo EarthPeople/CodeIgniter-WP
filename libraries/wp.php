@@ -4,7 +4,7 @@
  * CodeIgniter-WP Library
  *
  * @author 		peder fjällström / earth people ab
- * @copyright 	use any way you see fit
+ * @copyright 	use any way you see fit.
  * @version 	0.0.1
  */
 
