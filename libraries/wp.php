@@ -5,10 +5,10 @@
  *
  * @author 		peder fjällström / earth people ab
  * @copyright 	use any way you see fit.
- * @version 	0.0.1
+ * @version 	0.0.5
  */
 
-define('CODEIGNITER-WP_VERSION', '0.0.4');
+define('CODEIGNITER-WP_VERSION', '0.0.5');
 
 class Wp
 {
