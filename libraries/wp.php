@@ -201,7 +201,11 @@ class Wp
 		}
 		$wpdb->order_by($r['orderby'], $r['order']);
 		if($r['numberposts'] !== -1){
-			$wpdb->limit($r['numberposts']);
+			if($r['offset'] >= 1) {
+				$wpdb->limit($r['numberposts'],$r['offset']);
+			} else {
+				$wpdb->limit($r['numberposts']);
+			}
 		}
 		$posts = $wpdb->get();
 		if($posts->num_rows()>0){
