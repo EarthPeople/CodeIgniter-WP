@@ -110,6 +110,65 @@ class Wp
 		}
 	}
 	
+	public function get_comments($installation = '', $args = array()){
+		$defaults = array(
+			'author_email' => '',
+			'ID' => '',
+			'karma' => '',
+			'number' => '',
+			'offset' => '',
+			'orderby' => 'comment_date_gmt',
+			'order' => 'DESC',
+			'parent' => '',
+			'post_id' => '',
+			'status' => '',
+			'type' => '',
+			'user_id' => ''
+		);
+		
+		$r = $this->_wp_parse_args($args, $defaults);
+		$wpdb = $this->installations[$installation]->wpconfig->wpdb;
+		$wpdb
+			->select('*')
+			->from('comments');
+		if($r['author_email']){
+			$wpdb->where_in('comment_author_email',$r['author_email']);
+		}
+		if($r['ID']){
+			$wpdb->where_in('comment_ID',$r['ID']);
+		}
+		if($r['karma']){
+			$wpdb->where_in('comment_karma',$r['karma']);
+		}
+		if($r['parent']){
+			$wpdb->where_in('comment_parent',$r['parent']);
+		}
+		if($r['post_id']){
+			$wpdb->where_in('comment_post_ID',$r['post_id']);
+		}
+		if($r['status']){
+			$wpdb->where_in('comment_approved',$r['status']);
+		}
+		if($r['type']){
+			$wpdb->where_in('comment_type',$r['type']);
+		}
+		if($r['user_id']){
+			$wpdb->where_in('user_id',$r['user_id']);
+		}
+		$wpdb->order_by($r['orderby'], $r['order']);
+		if($r['number'] >= 0){
+			if($r['offset'] >= 1){
+				$wpdb->limit($r['number'],$r['offset']);
+			} else {
+				$wpdb->limit($r['number']);
+			}
+		}
+		$comments = $wpdb->get();
+		if($comments->num_rows()>0){
+			return $comments->result();
+		}
+	}
+	
 	public function get_children($installation = '', $args = array()){
 		$defaults = array(
 			'post_parent'		=> 0,
