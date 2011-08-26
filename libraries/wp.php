@@ -52,12 +52,17 @@ class Wp
 
 	public function wp_get_recent_posts($installation = '', $args = array()) {
 		$defaults = array(
-			'numberposts' => 10, 'offset' => 0,
-			'category' => 0, 'orderby' => 'post_date',
-			'order' => 'DESC', 'include' => '',
-			'exclude' => '', 'meta_key' => '',
-			'meta_value' =>'', 'post_type' => 'post', 'post_status' => 'draft, publish, future, pending, private',
-			'suppress_filters' => true
+			'numberposts' => 10,
+			'offset' => 0,
+			'category' => 0,
+			'orderby' => 'post_date',
+			'order' => 'DESC',
+			'include' => '',
+			'exclude' => '',
+			'meta_key' => '',
+			'meta_value' =>'',
+			'post_type' => 'post',
+			'post_status' => 'draft, publish, future, pending, private'
 		);
 		$r = $this->_wp_parse_args($args, $defaults);
 		$results = $this->get_posts($installation, $r);
@@ -78,31 +83,74 @@ class Wp
 	
 	private function get_posts($installation = '', $args = array()){
 		$defaults = array(
-			'numberposts' => 10, 'offset' => 0,
-			'category' => 0, 'orderby' => 'post_date',
-			'order' => 'DESC', 'include' => '',
-			'exclude' => '', 'meta_key' => '',
-			'meta_value' =>'', 'post_type' => 'post', 'post_status' => 'draft, publish, future, pending, private',
-			'suppress_filters' => true
+			'numberposts'	=> 10,
+			'offset'		=> 0,
+			'category'		=> 0,
+			'orderby'		=> 'post_date',
+			'order'			=> 'DESC',
+			'include'		=> '',
+			'exclude'		=> '',
+			'meta_key'		=> '',
+			'meta_value'	=> '',
+			'post_type'		=> 'post',
+			'post_status'	=> 'draft, publish, future, pending, private'
 		);
 		$r = $this->_wp_parse_args($args, $defaults);
-		$results = $this->get_posts($installation, $r);
-		
 		$wpdb = $this->installations[$installation]->wpconfig->wpdb;
 		$wpdb
 			->select('*')
 			->from('posts')
-			->where('post_type', $args['post_type'])
-			->where_in('post_status', explode(', ',$args['post_status']))
-			->order_by($args['orderby'], $args['order'])
-			->limit($args['numberposts'], $args['offset']);
+			->where('post_type', $r['post_type'])
+			->where_in('post_status', explode(', ',$r['post_status']))
+			->order_by($r['orderby'], $r['order'])
+			->limit($r['numberposts'], $r['offset']);
 		$posts = $wpdb->get();
 		if($posts->num_rows()>0){
 			return $posts->result();
 		}
 	}
 	
-	private function _wp_parse_args( $args, $defaults = '' ) {
+	public function get_children($installation = '', $args = array()){
+		$defaults = array(
+			'post_parent'		=> 0,
+			'offset'			=> 0,
+			'category'			=> '',
+			'orderby'			=> 'post_date',
+			'order'				=> 'DESC',
+			'post_status'		=> 'any',
+			'post_type'			=> 'any',
+			'include'			=> '',
+			'exclude'			=> '',
+			'meta_key'			=> '',
+			'meta_value'		=> '',
+			'post_mime_type'	=> '',
+			'post_parent'		=> 0,
+			'numberposts'		=> -1
+		);
+		
+		$r = $this->_wp_parse_args($args, $defaults);
+		$wpdb = $this->installations[$installation]->wpconfig->wpdb;
+		$wpdb
+			->select('*')
+			->from('posts')
+			->where('post_parent',$r['post_parent']);
+		if($r['post_type'] !== 'any'){
+			$wpdb->where_in('post_type', explode(', ',$r['post_type']));
+		}
+		if($r['post_status'] !== 'any'){
+			$wpdb->where_in('post_status', explode(', ',$r['post_status']));
+		}
+		$wpdb->order_by($r['orderby'], $r['order']);
+		if($r['numberposts'] !== -1){
+			$wpdb->limit($r['numberposts']);
+		}
+		$posts = $wpdb->get();
+		if($posts->num_rows()>0){
+			return $posts->result();
+		}
+	}
+	
+	private function _wp_parse_args($args, $defaults = '') {
 		if(is_object($args)){
 			$r = get_object_vars($args);
 		}else if(is_array($args)){
