@@ -18,7 +18,7 @@ First - open up sparks/config/wp.php and tell the spark where you have your Word
 Note that you need both file and mysql access to the WordPress installations.
 Next in your controller:
 
-	$this->load->spark('ciwp/0.0.6');
+	$this->load->spark('ciwp/0.0.7');
 	print_r($this->wp->get_post('blog', 1);
 	print_r($this->wp->get_installations());
 	print_r($this->wp->wp_get_recent_posts('blog', array()));
