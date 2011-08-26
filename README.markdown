@@ -18,7 +18,8 @@ First - open up sparks/config/wp.php and tell the spark where you have your Word
 Note that you need both file and mysql access to the WordPress installations.
 Next in your controller:
 
-	$this->load->spark('ciwp/0.0.7');
+
+	$this->load->spark('ciwp/0.0.8');
 	print_r($this->wp->get_post('blog', 1);
 	print_r($this->wp->get_installations());
 	print_r($this->wp->wp_get_recent_posts('blog', array()));
@@ -26,6 +27,8 @@ Next in your controller:
 	print_r($this->wp->get_post_meta('blog', array('post_id' => 1, 'key' => '_edit_last', 'single' => false)));
 	print_r($this->wp->get_children('blog', array('post_parent' => 1)));
 	print_r($this->wp->get_children('blog', array('post_parent' => 1, 'post_type' => 'attachment')));
+	print_r($this->wp->get_comments('blog',array()));
 
 Methods in this library will take the same arguments as the WordPress function in the Codex.
 
+Wordpress Codex: http://codex.wordpress.org/
