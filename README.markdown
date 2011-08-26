@@ -18,7 +18,7 @@ First - open up sparks/config/wp.php and tell the spark where you have your Word
 Note that you need both file and mysql access to the WordPress installations.
 Next in your controller:
 
-	$this->load->spark('wp/0.0.4');
+	$this->load->spark('CodeIgniter-WP/0.0.4');
 	print_r($this->wp->get_post('blog', 1);
 	print_r($this->wp->get_installations());
 	print_r($this->wp->wp_get_recent_posts('blog', array()));
