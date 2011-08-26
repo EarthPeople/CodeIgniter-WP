@@ -29,6 +29,6 @@ Next in your controller:
 	print_r($this->wp->get_children('blog', array('post_parent' => 1, 'post_type' => 'attachment')));
 	print_r($this->wp->get_comments('blog',array()));
 
-Methods in this library will take the same arguments as the WordPress function in the Codex.
+Methods in this library will take the same arguments as the WordPress function in the Codex. 
 
 Wordpress Codex: http://codex.wordpress.org/
