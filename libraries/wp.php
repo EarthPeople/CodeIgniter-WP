@@ -3,12 +3,12 @@
 /**
  * CodeIgniter-WP Library
  *
- * @author 		peder fjällström / earth people ab
+ * @author 		peder fjällström & mattias hedman / earth people ab
  * @copyright 	use any way you see fit.
- * @version 	0.0.5
+ * @version 	0.1.0
  */
 
-define('CODEIGNITER-WP_VERSION', '0.0.5');
+define('CODEIGNITER-WP_VERSION', '0.1.0');
 
 class Wp
 {
@@ -24,6 +24,10 @@ class Wp
 			log_message('error', 'WP Spark: no installations specified in config/wp.php');
 		}
 	}
+	
+	/* ----------------------
+	Public functions
+	-----------------------*/
 
 	public function get_installations(){
 		return $this->installations;
@@ -81,32 +85,60 @@ class Wp
 		}
 	}
 	
-	private function get_posts($installation = '', $args = array()){
+	public function wp_insert_post($installation = '', $args = array()){
 		$defaults = array(
-			'numberposts'	=> 10,
-			'offset'		=> 0,
-			'category'		=> 0,
-			'orderby'		=> 'post_date',
-			'order'			=> 'DESC',
-			'include'		=> '',
-			'exclude'		=> '',
-			'meta_key'		=> '',
-			'meta_value'	=> '',
-			'post_type'		=> 'post',
-			'post_status'	=> 'draft, publish, future, pending, private'
+			'menu_order' => '',
+			'comment_status' => 'open',
+			'ping_status' => 'open',
+			'pinged' => '',
+			'post_author' => '',
+			'post_content' => '',
+			'post_date' => date('Y-m-d H:i:s'),
+			'post_date_gmt' => date('Y-m-d H:i:s'),
+			'post_modified_gmt' => date('Y-m-d H:i:s'),
+			'post_modified' => date('Y-m-d H:i:s'),
+			'post_excerpt' => '',
+			'post_name' => '',
+			'post_parent' => '',
+			'post_password' => '',
+			'post_status' => 'draft',
+			'post_title' => '',
+			'post_type' => 'post',
+			'to_ping' => '',
 		);
-		$r = $this->_wp_parse_args($args, $defaults);
+		
+		$default_post_categorys = array('post_category' => array(1));
+		if($args['post_category']){
+			$post_categorys = array('post_category' => $args['post_category']);
+		}
+		
+		$default_tags = array('tags_input' => '');
+		if($args['tags_input']){
+			$tags = array('tags_input' => $args['tags_input']);
+		}
+		
+		if($args['ID']){
+			$id = $args['ID'];
+		}
+		
+		unset($args['post_category']);
+		unset($args['tags_input']);
+		unset($args['ID']);
+		
+		$r = $this->_wp_parse_args($args,$defaults);
 		$wpdb = $this->installations[$installation]->wpconfig->wpdb;
-		$wpdb
-			->select('*')
-			->from('posts')
-			->where('post_type', $r['post_type'])
-			->where_in('post_status', explode(', ',$r['post_status']))
-			->order_by($r['orderby'], $r['order'])
-			->limit($r['numberposts'], $r['offset']);
-		$posts = $wpdb->get();
-		if($posts->num_rows()>0){
-			return $posts->result();
+		if($id) {
+			if($wpdb->where('ID',$id)->update('posts',$r)) {
+				return $id;
+			} else {
+				return false;
+			}
+		} else {
+			if($wpdb->insert('posts',$r)) {
+				return $wpdb->insert_id();
+			} else {
+				return false;
+			}
 		}
 	}
 	
@@ -169,6 +201,31 @@ class Wp
 		}
 	}
 	
+	public function wp_insert_comment($installation = '', $args = array()){
+		$defaults = array(
+			'comment_post_ID' => '',
+			'comment_author' => '',	
+			'comment_author_email' => '',
+			'comment_author_url' => '',
+			'comment_content' => '',
+			'comment_type' => '',
+			'comment_parent' => 0,
+			'user_id' => '',
+			'comment_author_IP' => '',
+			'comment_agent' => '',
+			'comment_date' => '',
+			'comment_date_gmt' => '',
+			'comment_approved' => ''
+		);
+		$r = $this->_wp_parse_args($args, $defaults);
+		$wpdb = $this->installations[$installation]->wpconfig->wpdb;
+		if($wpdb->insert('comments',$r)){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public function get_children($installation = '', $args = array()){
 		$defaults = array(
 			'post_parent'		=> 0,
@@ -207,6 +264,39 @@ class Wp
 				$wpdb->limit($r['numberposts']);
 			}
 		}
+		$posts = $wpdb->get();
+		if($posts->num_rows()>0){
+			return $posts->result();
+		}
+	}
+	
+	/* ----------------------
+	Private functions
+	-----------------------*/
+	
+	private function get_posts($installation = '', $args = array()){
+		$defaults = array(
+			'numberposts'	=> 10,
+			'offset'		=> 0,
+			'category'		=> 0,
+			'orderby'		=> 'post_date',
+			'order'			=> 'DESC',
+			'include'		=> '',
+			'exclude'		=> '',
+			'meta_key'		=> '',
+			'meta_value'	=> '',
+			'post_type'		=> 'post',
+			'post_status'	=> 'draft, publish, future, pending, private'
+		);
+		$r = $this->_wp_parse_args($args, $defaults);
+		$wpdb = $this->installations[$installation]->wpconfig->wpdb;
+		$wpdb
+			->select('*')
+			->from('posts')
+			->where('post_type', $r['post_type'])
+			->where_in('post_status', explode(', ',$r['post_status']))
+			->order_by($r['orderby'], $r['order'])
+			->limit($r['numberposts'], $r['offset']);
 		$posts = $wpdb->get();
 		if($posts->num_rows()>0){
 			return $posts->result();
