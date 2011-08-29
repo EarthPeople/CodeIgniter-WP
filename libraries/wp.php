@@ -5,7 +5,7 @@
  *
  * @author 		peder fjällström & mattias hedman / earth people ab
  * @copyright 	use any way you see fit.
- * @version 	0.1.0
+ * @version 	0.2.0
  */
 
 define('CODEIGNITER-WP_VERSION', '0.1.0');

@@ -27,6 +27,7 @@ Next in your controller:
 	print_r($this->wp->get_children('blog',array()));
 	print_r($this->wp->wp_insert_post('blog',array()));
 	print_r($this->wp->wp_insert_comment('blog','array()));
+	print_r($this->wp->get_users('blog','array('include' => 1, 'exlude' => 3, 'number' => 5)));
 
 Methods in this library will take the same arguments as the WordPress function in the Codex. 
 
