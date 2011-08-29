@@ -144,6 +144,31 @@ class Wp
 		}
 	}
 	
+	public function wp_insert_comment($installation = '', $args = array()){
+		$defaults = array(
+			'comment_post_ID' => '',
+			'comment_author' => '',	
+			'comment_author_email' => '',
+			'comment_author_url' => '',
+			'comment_content' => '',
+			'comment_type' => '',
+			'comment_parent' => 0,
+			'user_id' => '',
+			'comment_author_IP' => '',
+			'comment_agent' => '',
+			'comment_date' => '',
+			'comment_date_gmt' => '',
+			'comment_approved' => ''
+		);
+		$r = $this->_wp_parse_args($args, $defaults);
+		$wpdb = $this->installations[$installation]->wpconfig->wpdb;
+		if($wpdb->insert('comments',$r)){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public function get_children($installation = '', $args = array()){
 		$defaults = array(
 			'post_parent'		=> 0,
