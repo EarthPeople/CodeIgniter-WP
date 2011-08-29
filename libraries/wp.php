@@ -3,12 +3,12 @@
 /**
  * CodeIgniter-WP Library
  *
- * @author 		peder fjällström / earth people ab
+ * @author 		peder fjällström & mattias hedman / earth people ab
  * @copyright 	use any way you see fit.
- * @version 	0.0.5
+ * @version 	0.1.0
  */
 
-define('CODEIGNITER-WP_VERSION', '0.0.5');
+define('CODEIGNITER-WP_VERSION', '0.1.0');
 
 class Wp
 {
