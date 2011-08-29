@@ -85,6 +85,31 @@ class Wp
 		}
 	}
 	
+	public function wp_insert_post($installaion = '', $args = array()){
+		$defaults = array(
+			'ID' => '',
+			'menu_order' => '',
+			'comment_status' => 'open',
+			'ping_status' => 'open',
+			'pinged' => '',
+			'post_author' => '',
+			'post_category' => array(1),
+			'post_content' => '',
+			'post_date' => date('Y-m-d H:i:s'),
+			'post_date_gmt' => date('Y-m-d H:i:s'),
+			'post_excerpt' => '',
+			'post_name' => '',
+			'post_parent' => '',
+			'post_password' => '',
+			'post_status' => 'draft',
+			'post_title' => '',
+			'post_type' => 'post',
+			'tags_input' => '',
+			'to_ping' => '',
+			'tax_input' => '' // array('taxonomy_name' => array('term', 'term2', 'term3'))
+		);
+	}
+	
 	public function get_comments($installation = '', $args = array()){
 		$defaults = array(
 			'author_email' => '',
