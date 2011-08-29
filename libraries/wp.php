@@ -24,6 +24,10 @@ class Wp
 			log_message('error', 'WP Spark: no installations specified in config/wp.php');
 		}
 	}
+	
+	/* ----------------------
+	Public functions
+	-----------------------*/
 
 	public function get_installations(){
 		return $this->installations;
@@ -78,35 +82,6 @@ class Wp
 		$posts = $wpdb->get();
 		if($posts->num_rows()>0){
 			return $posts->row();
-		}
-	}
-	
-	private function get_posts($installation = '', $args = array()){
-		$defaults = array(
-			'numberposts'	=> 10,
-			'offset'		=> 0,
-			'category'		=> 0,
-			'orderby'		=> 'post_date',
-			'order'			=> 'DESC',
-			'include'		=> '',
-			'exclude'		=> '',
-			'meta_key'		=> '',
-			'meta_value'	=> '',
-			'post_type'		=> 'post',
-			'post_status'	=> 'draft, publish, future, pending, private'
-		);
-		$r = $this->_wp_parse_args($args, $defaults);
-		$wpdb = $this->installations[$installation]->wpconfig->wpdb;
-		$wpdb
-			->select('*')
-			->from('posts')
-			->where('post_type', $r['post_type'])
-			->where_in('post_status', explode(', ',$r['post_status']))
-			->order_by($r['orderby'], $r['order'])
-			->limit($r['numberposts'], $r['offset']);
-		$posts = $wpdb->get();
-		if($posts->num_rows()>0){
-			return $posts->result();
 		}
 	}
 	
@@ -207,6 +182,39 @@ class Wp
 				$wpdb->limit($r['numberposts']);
 			}
 		}
+		$posts = $wpdb->get();
+		if($posts->num_rows()>0){
+			return $posts->result();
+		}
+	}
+	
+	/* ----------------------
+	Private functions
+	-----------------------*/
+	
+	private function get_posts($installation = '', $args = array()){
+		$defaults = array(
+			'numberposts'	=> 10,
+			'offset'		=> 0,
+			'category'		=> 0,
+			'orderby'		=> 'post_date',
+			'order'			=> 'DESC',
+			'include'		=> '',
+			'exclude'		=> '',
+			'meta_key'		=> '',
+			'meta_value'	=> '',
+			'post_type'		=> 'post',
+			'post_status'	=> 'draft, publish, future, pending, private'
+		);
+		$r = $this->_wp_parse_args($args, $defaults);
+		$wpdb = $this->installations[$installation]->wpconfig->wpdb;
+		$wpdb
+			->select('*')
+			->from('posts')
+			->where('post_type', $r['post_type'])
+			->where_in('post_status', explode(', ',$r['post_status']))
+			->order_by($r['orderby'], $r['order'])
+			->limit($r['numberposts'], $r['offset']);
 		$posts = $wpdb->get();
 		if($posts->num_rows()>0){
 			return $posts->result();
