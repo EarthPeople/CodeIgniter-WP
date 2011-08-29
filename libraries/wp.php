@@ -270,6 +270,48 @@ class Wp
 		}
 	}
 	
+	public function get_users($installation = '', $args = array()){
+		$defaults = array(
+			'include' => array(),
+			'exclude' => array(),
+			'orderby' => 'user_login',
+			'order' => 'ASC',
+			'offset' => '',
+			'number' => ''
+		);
+		
+		$r = $this->_wp_parse_args($args,$defaults);
+		$wpdb = $this->installations[$installation]->wpconfig->wpdb;
+		$wpdb
+			->select('*')
+			->from('users');
+		if($r['include']){
+			$count = count($r['include']);
+			for($i=0;$i<$count;$i++){
+				$wpdb->or_where('ID',$r['include'][$i]);
+			}
+		}
+		if($r['exclude']){
+			$count = count($r['exclude']);
+			for($i=0;$i<$count;$i++){
+				$wpdb->where_not_in('ID',$r['exclude'][$i]);
+			}
+		}
+		$wpdb->order_by($r['orderby'], $r['order']);
+		if($r['number'] !== -1){
+			if($r['offset'] >= 1) {
+				$wpdb->limit($r['number'],$r['offset']);
+			} else {
+				$wpdb->limit($r['number']);
+			}
+		}
+		
+		$posts = $wpdb->get();
+		if($posts->num_rows()>0){
+			return $posts->result();
+		}
+	}
+	
 	/* ----------------------
 	Private functions
 	-----------------------*/
