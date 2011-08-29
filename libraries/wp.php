@@ -85,18 +85,18 @@ class Wp
 		}
 	}
 	
-	public function wp_insert_post($installaion = '', $args = array()){
+	public function wp_insert_post($installation = '', $args = array()){
 		$defaults = array(
-			'ID' => '',
 			'menu_order' => '',
 			'comment_status' => 'open',
 			'ping_status' => 'open',
 			'pinged' => '',
 			'post_author' => '',
-			'post_category' => array(1),
 			'post_content' => '',
 			'post_date' => date('Y-m-d H:i:s'),
 			'post_date_gmt' => date('Y-m-d H:i:s'),
+			'post_modified_gmt' => date('Y-m-d H:i:s'),
+			'post_modified' => date('Y-m-d H:i:s'),
 			'post_excerpt' => '',
 			'post_name' => '',
 			'post_parent' => '',
@@ -104,10 +104,42 @@ class Wp
 			'post_status' => 'draft',
 			'post_title' => '',
 			'post_type' => 'post',
-			'tags_input' => '',
 			'to_ping' => '',
-			'tax_input' => '' // array('taxonomy_name' => array('term', 'term2', 'term3'))
 		);
+		
+		$default_post_categorys = array('post_category' => array(1));
+		if($args['post_category']){
+			$post_categorys = array('post_category' => $args['post_category']);
+		}
+		
+		$default_tags = array('tags_input' => '');
+		if($args['tags_input']){
+			$tags = array('tags_input' => $args['tags_input']);
+		}
+		
+		if($args['ID']){
+			$id = $args['ID'];
+		}
+		
+		unset($args['post_category']);
+		unset($args['tags_input']);
+		unset($args['ID']);
+		
+		$r = $this->_wp_parse_args($args,$defaults);
+		$wpdb = $this->installations[$installation]->wpconfig->wpdb;
+		if($id) {
+			if($wpdb->where('ID',$id)->update('posts',$r)) {
+				return $id;
+			} else {
+				return false;
+			}
+		} else {
+			if($wpdb->insert('posts',$r)) {
+				return $wpdb->insert_id();
+			} else {
+				return false;
+			}
+		}
 	}
 	
 	public function get_comments($installation = '', $args = array()){
