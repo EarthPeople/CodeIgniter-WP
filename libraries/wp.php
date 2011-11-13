@@ -21,7 +21,7 @@ class Wp
 				$installation->wpconfig = $this->_get_wpconfig($installation);
 			}
 		}else{
-			log_message('error', 'WP Spark: no installations specified in config/wp.php');
+			log_message('error', 'WP Spark: no installations specified in config/wp.php - ' . $installation);
 		}
 	}
 	
@@ -413,4 +413,64 @@ class Wp
 		}
 	}
 
+	/* ----------------------
+	Search Functions
+	-----------------------*/
+  /**
+   * Get Total posts by search query
+   * 
+   * @param string  $query         Search Query
+   * @param integer $post_per_page Number of posts per page
+   * @param integer $current_page  Current Page
+   * 
+   * @return array    Results Array
+   */
+	function find_posts($installation, $query, $post_per_page,$current_page)
+  {
+		
+		$offset = ( $current_page-1 ) * $post_per_page;
+
+		if ( $current_page == 1 )
+		{
+			$offset = 0;
+		}
+	
+		$sql   = "SELECT * FROM wp_posts WHERE  MATCH ( post_title, post_content ) AGAINST (?)  AND post_status='publish' LIMIT ?,?"; 
+		//$query = $this->db->query($sql, array($query, $offset, $post_per_page));
+
+		$wpdb  = $this->installations[$installation]->wpconfig->wpdb;
+		$query = $wpdb->query($sql, array($query, $offset, $post_per_page));
+
+/*
+		$posts = $wpdb->get();
+		if( $posts->num_rows() >0 )
+		{
+			return $posts->result();
+		}
+*/
+
+		return $query->result_array();
+	}
+	
+	/**
+   * Return Number of Rows in Search
+   * 
+   * @param unknown $query Description
+   * 
+   * @return integer    Number of Rows
+   */
+	function get_numrows($installation, $query) {
+	
+		$rows=0;
+	
+		$sql = "SELECT * FROM wp_posts WHERE  MATCH ( post_title, post_content ) AGAINST (?)  AND post_status='publish'"; 
+
+		$wpdb = $this->installations[$installation]->wpconfig->wpdb;
+		$query = $wpdb->query($sql, array($query));
+
+		$rows=$query->num_rows();
+		
+		return $rows;
+	}
+ 	
 }
